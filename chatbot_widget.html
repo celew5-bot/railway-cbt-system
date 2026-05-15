@@ -1,0 +1,74 @@
+<style>
+    .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; font-family: 'Segoe UI', sans-serif; }
+    .chat-toggle { width: 60px; height: 60px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,242,254,0.4); transition: 0.3s; }
+    .chat-toggle:hover { transform: scale(1.1); }
+    
+    .chat-window { display: none; width: 350px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; transform-origin: bottom right; animation: popUp 0.3s ease-out; border: 1px solid #eee; }
+    @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    
+    .chat-header { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .close-btn { cursor: pointer; font-size: 20px; }
+    
+    .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 13px; line-height: 1.4; animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .msg.bot { background: white; color: #333; border-bottom-left-radius: 2px; align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .msg.user { background: #4facfe; color: white; border-bottom-right-radius: 2px; align-self: flex-end; box-shadow: 0 2px 5px rgba(79,172,254,0.3); }
+    
+    .chat-options { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; flex-wrap: wrap; gap: 8px; }
+    .opt-btn { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; padding: 8px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+    .opt-btn:hover { background: #bbdefb; }
+</style>
+
+<div class="chat-widget">
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span>🤖 CBT Assistant</span>
+            <span class="close-btn" onclick="toggleChat()">×</span>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg bot">Hello! I am your offline assessment assistant. How can I help you today?</div>
+        </div>
+        <div class="chat-options">
+            <button class="opt-btn" onclick="askQuestion('How do I play the games?')">How to Play?</button>
+            <button class="opt-btn" onclick="askQuestion('What is the passing score?')">Passing Score?</button>
+            <button class="opt-btn" onclick="askQuestion('My internet disconnected!')">No Internet?</button>
+            <button class="opt-btn" onclick="askQuestion('Can I retake a test?')">Retake Test?</button>
+        </div>
+    </div>
+    <div class="chat-toggle" onclick="toggleChat()">💬</div>
+</div>
+
+<script>
+    const QA_DATABASE = {
+        "How do I play the games?": "Click on any module in your dashboard. Read the instructions carefully before the timer starts. Use your mouse to select options.",
+        "What is the passing score?": "Most cognitive modules require a minimum score of 60% to achieve a 'PASS' status.",
+        "My internet disconnected!": "Don't panic! The games work offline. Just finish your test normally. Your score will save locally and sync automatically when Wi-Fi returns.",
+        "Can I retake a test?": "No, each test module can only be attempted once per login session to ensure accurate cognitive assessment."
+    };
+
+    function toggleChat() {
+        const win = document.getElementById('chatWindow');
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function askQuestion(q) {
+        const body = document.getElementById('chatBody');
+        
+        // Add User Message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.innerText = q;
+        body.appendChild(userMsg);
+        
+        // Add Bot Reply (with slight delay for realism)
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'msg bot';
+            botMsg.innerText = QA_DATABASE[q] || "I don't have the answer to that. Please ask your Lobby Admin.";
+            body.appendChild(botMsg);
+            body.scrollTop = body.scrollHeight; // Auto-scroll
+        }, 400);
+    }
+</script>
